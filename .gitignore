@@ -1,0 +1,63 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+*.env
+
+# VS Code settings
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and local data
+*.log
+*.sqlite3
+
+# Python egg files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# OneDrive sync files
+*.tmp
+~$*
+
+# Environment variables
+.env
+.env.*
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# PyInstaller
+*.spec
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# Test output
+.pytest_cache/
