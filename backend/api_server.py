@@ -67,12 +67,12 @@ async def chat(
 
 # Serve static files at /static
 
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")), name="static")
 
 # Serve index.html at root
 @app.get("/")
 def read_index():
-    return FileResponse("frontend/agent.html")
+    return FileResponse(os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "agent.html"))
 
 if __name__ == "__main__":
     uvicorn.run("api_server:app", host="0.0.0.0", port=8000, reload=True)
