@@ -1,10 +1,14 @@
+# Import patch first to fix inspect.getargspec issue
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import patch
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from typing import List
 import uvicorn
-import os
 import tempfile
 from financial_agent import web_search_agent, financial_agent, multimodel_agent, extract_pdf_text
 

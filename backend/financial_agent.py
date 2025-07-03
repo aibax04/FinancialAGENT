@@ -1,3 +1,9 @@
+# Import patch first to fix inspect.getargspec issue
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import patch
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from phi.agent import Agent
@@ -5,7 +11,6 @@ from phi.model.groq import Groq
 from phi.tools.yfinance import YFinanceTools
 from phi.tools.duckduckgo import DuckDuckGo
 import PyPDF2
-import os
 from typing import List
 import tempfile
 
