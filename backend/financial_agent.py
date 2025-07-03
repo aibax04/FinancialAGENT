@@ -74,6 +74,7 @@ async def chat_with_agent(
     agent: str = Form("multimodel"),
     files: List[UploadFile] = File([])
 ):
+    print("Received chat request")
     try:
         # Save uploaded PDFs to temp files
         temp_files = []
@@ -117,7 +118,8 @@ async def chat_with_agent(
         return {"response": response}
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print("ERROR in /chat:", e)
+        return {"response": "Sorry, I encountered an error. Please try again."}
 
 if __name__ == "__main__":
     import uvicorn

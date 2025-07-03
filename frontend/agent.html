@@ -605,24 +605,40 @@
              return formatted;
         }
         
-        chatForm.addEventListener('submit', async (e) => {
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const message = chatInput.value.trim();
-            if (!message && uploadedFiles.length === 0) return;
+            const message = document.getElementById('chatInput').value.trim();
+            const agentType = document.querySelector('.nav-item.active').dataset.agent;
 
+            // Get all uploaded files
+            const fileInput = document.getElementById('pdfInput');
+            const files = Array.from(fileInput.files);
+
+            if (!message && files.length === 0) return;
+
+            // Create FormData object
+            const formData = new FormData();
+            formData.append('message', message || "Please analyze the uploaded documents");
+            formData.append('agent', agentType);
+
+            // Append all files
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+
+            // Add user message to chat
             if (message) {
                 addMessage('user', message);
             }
-            
-            // If files are uploaded but no message, ask to analyze them
-            const userMessage = message || "Please analyze the uploaded PDF documents.";
-            if (uploadedFiles.length > 0 && !message) {
-                addMessage('user', `I've uploaded ${uploadedFiles.length} PDF file(s) for analysis.`);
+            if (files.length > 0) {
+                addMessage('user', `Uploaded ${files.length} file(s) for analysis`);
             }
-            
-            chatInput.value = '';
 
-            // Add loading indicator
+            document.getElementById('chatInput').value = '';
+            fileInput.value = '';
+            document.getElementById('fileList').innerHTML = '';
+
+            // Show loading indicator
             const loadingMsg = document.createElement('div');
             loadingMsg.className = 'message agent';
             loadingMsg.innerHTML = `
@@ -631,42 +647,33 @@
                     <span style="margin-left:10px;">Thinking</span>
                 </span>
             `;
-            chatMessages.appendChild(loadingMsg);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            document.getElementById('chatMessages').appendChild(loadingMsg);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
 
             try {
-                const response = await callAgentAPI(userMessage, currentAgent, uploadedFiles);
-                chatMessages.removeChild(loadingMsg);
-                addMessage('agent', response);
+                // Send request to backend
+                // Add this before your existing script
+                const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? 'http://localhost:8000' 
+                    : '';
+                
+                // Then update your fetch call
+                const response = await fetch(`${API_URL}/chat`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                document.getElementById('chatMessages').removeChild(loadingMsg);
+                addMessage('agent', data.response);
             } catch (error) {
                 console.error('Error:', error);
-                chatMessages.removeChild(loadingMsg);
+                document.getElementById('chatMessages').removeChild(loadingMsg);
                 addMessage('agent', 'Sorry, I encountered an error. Please try again.');
             }
         });
-        
-        async function callAgentAPI(message, agentType, files = []) {
-            const formData = new FormData();
-            formData.append("message", message);
-            formData.append("agent", agentType);
-            
-            // Append all files
-            for (let file of files) {
-                formData.append("files", file);
-            }
-            
-            const response = await fetch("http://localhost:8000/chat", {
-                method: "POST",
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            return data.response || 'No response received.';
-        }
         
         function startNewChat() {
             chatStarted = false;

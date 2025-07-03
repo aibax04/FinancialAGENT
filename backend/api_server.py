@@ -1,11 +1,13 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from typing import List
 import uvicorn
 import os
 import tempfile
-
 from financial_agent import web_search_agent, financial_agent, multimodel_agent, extract_pdf_text
+
 
 app = FastAPI()
 
@@ -32,30 +34,25 @@ async def chat(
                 tmp.write(await file.read())
                 pdf_paths.append(tmp.name)
 
-    # Extract PDF text if any PDFs are uploaded
     if pdf_paths:
         pdf_text = extract_pdf_text(pdf_paths)
-        # Clean up temp files after extraction
         for path in pdf_paths:
             try:
                 os.remove(path)
             except Exception:
                 pass
 
-    # Add PDF context to the prompt if available
     prompt_with_pdf = message
     if pdf_text:
         prompt_with_pdf += f"\n\n[PDF Content]\n{pdf_text[:3000]}"
 
-    # Route to the correct agent
     if agent == "financial":
         response = financial_agent.run(prompt_with_pdf)
     elif agent == "web":
         response = web_search_agent.run(prompt_with_pdf)
-    else:  # multimodel or default
+    else:
         response = multimodel_agent.run(prompt_with_pdf)
 
-    # Format response
     if hasattr(response, 'content'):
         full_response = response.content
     elif isinstance(response, str):
@@ -64,5 +61,15 @@ async def chat(
         full_response = str(response)
     return {"response": full_response}
 
+# Serve static files at /static
+
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+# Serve index.html at root
+@app.get("/")
+def read_index():
+    return FileResponse("frontend/agent.html")
+
 if __name__ == "__main__":
     uvicorn.run("api_server:app", host="0.0.0.0", port=8000, reload=True)
+    
