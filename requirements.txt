@@ -7,5 +7,5 @@ fastapi
 uvicorn
 groq
 PyPDF2
-phi-agent
+phi-ml
 python-multipart
