@@ -7,5 +7,5 @@ fastapi
 uvicorn
 groq
 PyPDF2
-phi-ml
+phi==1.0.0  # Replace with the correct version
 python-multipart
