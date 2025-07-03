@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nimbus AI Agent - Frosted Glass UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-accent: #8b5cf6;
+            --primary-accent-light: #a78bfa;
+            --dark-bg: #030014;
+            --glass-bg: rgba(27, 27, 48, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-sidebar-bg: rgba(27, 27, 48, 0.25);
+            --text-primary: #f1f5f9;
+            --text-secondary: #a8a29e;
+            --text-muted: #78716c;
+            --shadow-color: rgba(139, 92, 246, 0.3);
+            --glow-color: rgba(139, 92, 246, 0.6);
+            --border-radius: 16px;
+            --gradient-primary: linear-gradient(135deg, var(--primary-accent), #6d28d9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes backgroundPan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+            overflow: hidden;
+            background-color: var(--dark-bg);
+            background-image: linear-gradient(-45deg, #030014, #2a0a4a, #0a2a4a, #030014);
+            background-size: 400% 400%;
+            animation: backgroundPan 15s ease-in-out infinite;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiGAAAANlBMVEX///9ISEhJSUlKSkpMTExNTU1OTk5QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVl2lfHAAAAAEXRSTlMAARk2lKIZ6uG+mej+64d1fX3o8gAAAFNJREFUeNrt08sRACAMxDBa/v+vEwWMhIidZ+EwKwpE8wEAAAAAAAAAAAAAAAAAAN4G9+0jKze9PGeLp3kuJ6f5LizRNE/l5PTeLp7m+f8FAAD+A2wDATyGk6JaAAAAAElFTkSuQmCC');
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            min-height: 100vh;
+            height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--glass-sidebar-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .nexus-logo {
+            height: 64px;
+            width: 64px;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #8b5cf655, 0 0 0 4px #23262f;
+            background: #fff;
+            transition: transform 0.2s;
+        }
+
+        .nexus-logo:hover {
+            transform: scale(1.07) rotate(-2deg);
+            box-shadow: 0 8px 32px #8b5cf6aa, 0 0 0 4px #23262f;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding-left: 0.5rem;
+        }
+
+        .nav-item {
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary-accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .new-chat-btn {
+            background: var(--primary-accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: auto;
+            transition: all 0.25s ease;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--primary-accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--shadow-color);
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            padding: 0;
+            min-height: 100vh;
+            height: 100vh;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            min-height: 0;
+        }
+
+        .welcome-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 0;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .nexus-heading-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .nexus-heading-wrapper .welcome-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: #f1f5f9;
+            text-shadow: 0 0 24px #8b5cf6, 0 0 4px #fff;
+            margin-bottom: 1.25rem;
+        }
+
+        .nexus-wires {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 2;
+            filter: drop-shadow(0 0 8px #8b5cf6aa);
+        }
+
+        .welcome-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            letter-spacing: -2px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .welcome-title::before {
+            content: '';
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%; height: 120%;
+            background-image: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 550px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: unset;
+            min-height: 0;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 1rem 1.5rem;
+            border-radius: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .message.agent {
+            align-self: flex-start;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            border-bottom-left-radius: 0.5rem;
+        }
+
+        .input-section {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1.25rem;
+            padding: 0.5rem;
+            transition: all 0.25s ease;
+        }
+
+        .input-wrapper:focus-within {
+            box-shadow: 0 0 0 2px var(--primary-accent);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            padding: 0.8rem 1.2rem;
+        }
+        
+        .send-btn {
+            background: var(--primary-accent);
+            border: none;
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        
+        .attach-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background 0.2s;
+            width: 36px;
+            height: 36px;
+        }
+
+        .attach-btn:hover {
+            background: rgba(192,192,192,0.12);
+        }
+
+        .attach-btn svg {
+            display: block;
+        }
+
+        .nav-item, .send-btn, .new-chat-btn, .message { animation: fadeIn 0.5s ease-out forwards; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+
+        .thinking-anim {
+            display: inline-flex;
+            align-items: center;
+            animation: fadeIn 0.7s ease-out;
+        }
+
+        .runner {
+            animation: run 1s linear infinite;
+            margin-right: 4px;
+        }
+
+        @keyframes run {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(10px); }
+        }
+
+        .dots {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-accent);
+            margin-left: 4px;
+            animation: dotFlashing 1s infinite linear;
+        }
+
+        @keyframes dotFlashing {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .pdf-upload-label:hover {
+            background: var(--primary-accent-light);
+        }
+
+        .contact-support {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            margin-top: 2rem;
+        }
+
+        .contact-support span {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .contact-email {
+            color: var(--primary-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        .file-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .file-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .remove-file {
+            margin-left: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .remove-file:hover {
+            color: var(--primary-accent-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="nimbus ai logo-Photoroom.png" alt="Nimbus Logo" class="nexus-logo">
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Agent Types</div>
+                <div class="nav-item active" data-agent="multimodel">Multi-Model Agent</div>
+                <div class="nav-item" data-agent="financial">Financial Agent</div>
+                <div class="nav-item" data-agent="web">Web Agent</div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">History</div>
+            </div>
+            <button class="new-chat-btn" onclick="startNewChat()">New Chat</button>
+        </aside>
+
+        <main class="main">
+            <div class="chat-container">
+                <div class="welcome-section" id="welcomeSection">
+                    <div class="nexus-heading-wrapper" style="position: relative; display: inline-block;">
+                        <svg class="nexus-wires" width="340" height="90" viewBox="0 0 340 90" fill="none" style="position:absolute;top:-30px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:2;">
+                            <path d="M10,60 Q60,10 120,60 T230,60 Q280,10 330,60" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round">
+                                <animate attributeName="d" dur="3s" repeatCount="indefinite"
+                                    values="
+                                        M10,60 Q60,10 120,60 T230,60 Q280,10 330,60;
+                                        M10,55 Q60,20 120,55 T230,65 Q280,20 330,65;
+                                        M10,60 Q60,10 120,60 T230,60 Q280,10 330,60
+                                    "
+                                />
+                            </path>
+                            <circle cx="60" cy="10" r="5" fill="#fff" opacity="0.7">
+                                <animate attributeName="cy" values="10;20;10" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="280" cy="10" r="5" fill="#fff" opacity="0.7">
+                                <animate attributeName="cy" values="10;20;10" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="120" cy="60" r="4" fill="#a78bfa" opacity="0.8"/>
+                            <circle cx="230" cy="60" r="4" fill="#a78bfa" opacity="0.8"/>
+                        </svg>
+                        <h1 class="welcome-title" style="position:relative;z-index:3;">NIMBUS</h1>
+                    </div>
+                    <p class="welcome-subtitle">Your intelligent partner for real-time insights, financial data, and web intelligence.</p>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="input-section">
+                    <form id="chatForm" style="margin:0;">
+                        <div class="input-wrapper">
+                            <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" multiple>
+                            <label for="pdfInput" class="attach-btn" title="Attach PDF">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
+                                    <path d="M16.5 13.5L9.5 20.5C7.5 22.5 4.5 22.5 2.5 20.5C0.5 18.5 0.5 15.5 2.5 13.5L15.5 0.5C17.5 -1.5 20.5 -1.5 22.5 0.5C24.5 2.5 24.5 5.5 22.5 7.5L9.5 20.5" stroke="#C0C0C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </label>
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Ask Nimbus anything..." autocomplete="off">
+                            <button type="submit" class="send-btn" id="sendBtn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentAgent = 'multimodel';
+        let chatStarted = false;
+        let uploadedFiles = [];
+        
+        const welcomeSection = document.getElementById('welcomeSection');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatForm = document.getElementById('chatForm');
+        const pdfInput = document.getElementById('pdfInput');
+        const fileList = document.getElementById('fileList');
+        
+        // Initialize agent navigation
+        document.querySelectorAll('.nav-item[data-agent]').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item[data-agent]').forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                currentAgent = item.dataset.agent;
+                const placeholders = {
+                    'multimodel': 'Ask about documents, analysis, or general topics...',
+                    'financial': 'Ask about stocks, market data, or financial reports...',
+                    'web': 'Search the web for the latest information...'
+                };
+                chatInput.placeholder = placeholders[currentAgent];
+            });
+        });
+        
+        // Handle PDF file uploads
+        pdfInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach(file => {
+                    if (file.type === 'application/pdf') {
+                        uploadedFiles.push(file);
+                        addFileToUI(file);
+                    }
+                });
+            }
+        });
+        
+        function addFileToUI(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                ${file.name}
+                <span class="remove-file" data-name="${file.name}">×</span>
+            `;
+            fileList.appendChild(fileItem);
+            
+            // Add click handler for remove button
+            fileItem.querySelector('.remove-file').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const fileName = e.target.getAttribute('data-name');
+                uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+                fileItem.remove();
+            });
+        }
+        
+        function addMessage(type, content) {
+            if (!chatStarted) {
+                welcomeSection.style.display = 'none';
+                chatMessages.style.display = 'flex';
+                chatStarted = true;
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+
+            if (type === 'agent') {
+                let i = 0;
+                let formatted = formatMessage(content);
+                message.innerHTML = '';
+                chatMessages.appendChild(message);
+
+                function typeWriter() {
+                    if (i < formatted.length) {
+                        if (formatted[i] === '<') {
+                            let tagEnd = formatted.indexOf('>', i);
+                            if (tagEnd !== -1) {
+                                message.innerHTML += formatted.slice(i, tagEnd + 1);
+                                i = tagEnd + 1;
+                            } else {
+                                message.innerHTML += formatted[i];
+                                i++;
+                            }
+                        } else {
+                            message.innerHTML += formatted[i];
+                            i++;
+                        }
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        setTimeout(typeWriter, 12);
+                    }
+                }
+                typeWriter();
+            } else {
+                message.innerHTML = formatMessage(content);
+                chatMessages.appendChild(message);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        function formatMessage(text) {
+             if (!text) return '';
+             let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+             formatted = formatted.replace(/\n/g, '<br>');
+             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+             return formatted;
+        }
+        
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message && uploadedFiles.length === 0) return;
+
+            if (message) {
+                addMessage('user', message);
+            }
+            
+            // If files are uploaded but no message, ask to analyze them
+            const userMessage = message || "Please analyze the uploaded PDF documents.";
+            if (uploadedFiles.length > 0 && !message) {
+                addMessage('user', `I've uploaded ${uploadedFiles.length} PDF file(s) for analysis.`);
+            }
+            
+            chatInput.value = '';
+
+            // Add loading indicator
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'message agent';
+            loadingMsg.innerHTML = `
+                <span class="thinking-anim">
+                    <span class="dots"></span>
+                    <span style="margin-left:10px;">Thinking</span>
+                </span>
+            `;
+            chatMessages.appendChild(loadingMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await callAgentAPI(userMessage, currentAgent, uploadedFiles);
+                chatMessages.removeChild(loadingMsg);
+                addMessage('agent', response);
+            } catch (error) {
+                console.error('Error:', error);
+                chatMessages.removeChild(loadingMsg);
+                addMessage('agent', 'Sorry, I encountered an error. Please try again.');
+            }
+        });
+        
+        async function callAgentAPI(message, agentType, files = []) {
+            const formData = new FormData();
+            formData.append("message", message);
+            formData.append("agent", agentType);
+            
+            // Append all files
+            for (let file of files) {
+                formData.append("files", file);
+            }
+            
+            const response = await fetch("http://localhost:8000/chat", {
+                method: "POST",
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data.response || 'No response received.';
+        }
+        
+        function startNewChat() {
+            chatStarted = false;
+            chatMessages.innerHTML = '';
+            chatMessages.style.display = 'none';
+            welcomeSection.style.display = 'block';
+            chatInput.value = '';
+            uploadedFiles = [];
+            fileList.innerHTML = '';
+            chatInput.focus();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => chatInput.focus());
+    </script>
+</body>
+</html>
