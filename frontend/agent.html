@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nimbus AI Agent - Frosted Glass UI</title>
+    <title>Nimbus AI Agent - Enhanced UI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -28,9 +28,95 @@
             box-sizing: border-box;
         }
 
+        /* Cursor Sparkle Effect */
+        .cursor-sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff 0%, var(--primary-accent) 50%, transparent 70%);
+            animation: sparkle 0.8s ease-out forwards;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+
+        /* Floating Particles Background */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary-accent);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px var(--shadow-color); }
+            50% { box-shadow: 0 0 30px var(--glow-color), 0 0 40px var(--shadow-color); }
         }
         
         @keyframes backgroundPan {
@@ -39,11 +125,34 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes messageSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes messageSlideInRight {
+            from { 
+                opacity: 0; 
+                transform: translateX(30px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0) scale(1);
+            }
+        }
+
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
         }
+
         body {
             min-height: 100vh;
             height: 100vh;
@@ -56,6 +165,12 @@
             animation: backgroundPan 15s ease-in-out infinite;
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
+            cursor: default; /* Default cursor */
+        }
+
+        /* Interactive elements get pointer cursor */
+        button, .nav-item, .attach-btn, .remove-file, input[type="file"] + label, a {
+            cursor: pointer;
         }
         
         body::before {
@@ -72,6 +187,8 @@
             min-height: 100vh;
             height: 100vh;
             display: flex;
+            position: relative;
+            z-index: 2;
         }
 
         .sidebar {
@@ -83,7 +200,12 @@
             padding: 2.5rem 1.5rem;
             display: flex;
             flex-direction: column;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .sidebar:hover {
+            background: rgba(27, 27, 48, 0.35);
         }
 
         .logo {
@@ -91,6 +213,7 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out 0.2s both;
         }
 
         .nexus-logo {
@@ -100,16 +223,18 @@
             border-radius: 16px;
             box-shadow: 0 4px 24px #8b5cf655, 0 0 0 4px #23262f;
             background: #fff;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nexus-logo:hover {
-            transform: scale(1.07) rotate(-2deg);
-            box-shadow: 0 8px 32px #8b5cf6aa, 0 0 0 4px #23262f;
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 8px 32px #8b5cf6aa, 0 0 0 6px #23262f;
+            animation: glow 2s infinite;
         }
 
         .nav-section {
             margin-bottom: 2rem;
+            animation: fadeIn 1s ease-out 0.4s both;
         }
 
         .nav-title {
@@ -120,6 +245,24 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             padding-left: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-title::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-accent), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .nav-section:hover .nav-title::before {
+            transform: translateX(0);
         }
 
         .nav-item {
@@ -128,18 +271,52 @@
             color: var(--text-secondary);
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
         }
 
         .nav-item:hover {
             background: rgba(255, 255, 255, 0.08);
             color: var(--text-primary);
+            transform: translateX(8px);
         }
 
         .nav-item.active {
             background: var(--primary-accent);
             color: white;
             font-weight: 600;
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
 
         .new-chat-btn {
@@ -152,13 +329,34 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: auto;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .new-chat-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover::before {
+            width: 100%;
+            height: 100%;
         }
 
         .new-chat-btn:hover {
             background: var(--primary-accent-light);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px var(--shadow-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--shadow-color);
         }
 
         .main {
@@ -169,6 +367,7 @@
             padding: 0;
             min-height: 100vh;
             height: 100vh;
+            animation: slideInRight 0.8s ease-out;
         }
 
         .chat-container {
@@ -189,6 +388,7 @@
             width: 100%;
             padding: 2rem;
             text-align: center;
+            animation: fadeIn 1.2s ease-out 0.3s both;
         }
 
         .nexus-heading-wrapper {
@@ -203,6 +403,7 @@
             color: #f1f5f9;
             text-shadow: 0 0 24px #8b5cf6, 0 0 4px #fff;
             margin-bottom: 1.25rem;
+            animation: pulse 3s infinite;
         }
 
         .nexus-wires {
@@ -234,6 +435,7 @@
             filter: blur(80px);
             z-index: -1;
             opacity: 0.8;
+            animation: pulse 4s infinite;
         }
 
         .welcome-subtitle {
@@ -242,6 +444,7 @@
             max-width: 550px;
             margin: 0 auto;
             line-height: 1.7;
+            animation: fadeIn 1.5s ease-out 0.8s both;
         }
 
         .chat-messages {
@@ -260,6 +463,23 @@
             padding: 1rem 1.5rem;
             border-radius: 1.25rem;
             line-height: 1.6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .message:hover::before {
+            left: 100%;
         }
 
         .message.user {
@@ -268,6 +488,7 @@
             color: white;
             border-bottom-right-radius: 0.5rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: messageSlideInRight 0.5s ease-out;
         }
 
         .message.agent {
@@ -275,11 +496,13 @@
             background: rgba(0, 0, 0, 0.2);
             color: var(--text-primary);
             border-bottom-left-radius: 0.5rem;
+            animation: messageSlideIn 0.5s ease-out;
         }
 
         .input-section {
             padding: 1.5rem 2rem;
             border-top: 1px solid var(--glass-border);
+            animation: fadeIn 1s ease-out 1s both;
         }
 
         .input-wrapper {
@@ -288,11 +511,30 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 1.25rem;
             padding: 0.5rem;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .input-wrapper:hover::before {
+            transform: translateX(100%);
         }
 
         .input-wrapper:focus-within {
             box-shadow: 0 0 0 2px var(--primary-accent);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .chat-input {
@@ -303,6 +545,8 @@
             color: var(--text-primary);
             font-size: 1rem;
             padding: 0.8rem 1.2rem;
+            position: relative;
+            z-index: 2;
         }
         
         .send-btn {
@@ -312,7 +556,33 @@
             width: 44px; height: 44px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px var(--shadow-color);
         }
         
         .attach-btn {
@@ -322,23 +592,37 @@
             margin-right: 8px;
             cursor: pointer;
             border-radius: 50%;
-            transition: background 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             width: 36px;
             height: 36px;
+            position: relative;
+            z-index: 2;
         }
 
         .attach-btn:hover {
             background: rgba(192,192,192,0.12);
+            transform: scale(1.1);
         }
 
         .attach-btn svg {
             display: block;
+            transition: all 0.3s ease;
         }
 
-        .nav-item, .send-btn, .new-chat-btn, .message { animation: fadeIn 0.5s ease-out forwards; }
+        .attach-btn:hover svg {
+            transform: rotate(15deg);
+        }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.2); 
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: rgba(255, 255, 255, 0.4); 
+        }
 
         .thinking-anim {
             display: inline-flex;
@@ -372,10 +656,6 @@
             100% { opacity: 0; }
         }
 
-        .pdf-upload-label:hover {
-            background: var(--primary-accent-light);
-        }
-
         .contact-support {
             text-align: center;
             padding: 2rem;
@@ -394,10 +674,12 @@
             color: var(--primary-accent);
             text-decoration: none;
             font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .contact-email:hover {
             text-decoration: underline;
+            color: var(--primary-accent-light);
         }
 
         .file-list {
@@ -414,20 +696,47 @@
             font-size: 0.8rem;
             display: flex;
             align-items: center;
+            animation: fadeIn 0.3s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .remove-file {
             margin-left: 6px;
             cursor: pointer;
             color: var(--text-muted);
+            transition: all 0.3s ease;
         }
 
         .remove-file:hover {
             color: var(--primary-accent-light);
+            transform: scale(1.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Floating Particles -->
+    <div class="floating-particles"></div>
+    
     <div class="container">
         <aside class="sidebar">
             <div class="logo">
@@ -507,53 +816,56 @@
         const chatForm = document.getElementById('chatForm');
         const pdfInput = document.getElementById('pdfInput');
         const fileList = document.getElementById('fileList');
+        const particlesContainer = document.querySelector('.floating-particles');
         
-        // Initialize agent navigation
-        document.querySelectorAll('.nav-item[data-agent]').forEach(item => {
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item[data-agent]').forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
-                currentAgent = item.dataset.agent;
-                const placeholders = {
-                    'multimodel': 'Ask about documents, analysis, or general topics...',
-                    'financial': 'Ask about stocks, market data, or financial reports...',
-                    'web': 'Search the web for the latest information...'
-                };
-                chatInput.placeholder = placeholders[currentAgent];
-            });
-        });
-        
-        // Handle PDF file uploads
-        pdfInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                files.forEach(file => {
-                    if (file.type === 'application/pdf') {
-                        uploadedFiles.push(file);
-                        addFileToUI(file);
-                    }
-                });
-            }
-        });
-        
-        function addFileToUI(file) {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                ${file.name}
-                <span class="remove-file" data-name="${file.name}">×</span>
-            `;
-            fileList.appendChild(fileItem);
+        // Create sparkle effect
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'cursor-sparkle';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
             
-            // Add click handler for remove button
-            fileItem.querySelector('.remove-file').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const fileName = e.target.getAttribute('data-name');
-                uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
-                fileItem.remove();
-            });
+            // Random size and color variation
+            const size = Math.random() * 6 + 4;
+            sparkle.style.width = size + 'px';
+            sparkle.style.height = size + 'px';
+            
+            // Random offset
+            sparkle.style.transform = `translate(${(Math.random() - 0.5) * 20}px, ${(Math.random() - 0.5) * 20}px)`;
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) {
+                    sparkle.parentNode.removeChild(sparkle);
+                }
+            }, 800);
         }
         
+        // Create floating particles
+        function createParticles() {
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Initialize particles
+        createParticles();
+        
+        // Enhanced message animations
         function addMessage(type, content) {
             if (!chatStarted) {
                 welcomeSection.style.display = 'none';
@@ -563,12 +875,20 @@
 
             const message = document.createElement('div');
             message.className = `message ${type}`;
+            message.style.opacity = '0';
+            message.style.transform = type === 'user' ? 'translateX(30px) scale(0.95)' : 'translateX(-30px) scale(0.95)';
 
             if (type === 'agent') {
                 let i = 0;
                 let formatted = formatMessage(content);
                 message.innerHTML = '';
                 chatMessages.appendChild(message);
+                
+                // Animate message appearance
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                    message.style.transform = 'translateX(0) scale(1)';
+                }, 50);
 
                 function typeWriter() {
                     if (i < formatted.length) {
@@ -589,10 +909,17 @@
                         setTimeout(typeWriter, 12);
                     }
                 }
-                typeWriter();
+                setTimeout(typeWriter, 200);
             } else {
                 message.innerHTML = formatMessage(content);
                 chatMessages.appendChild(message);
+                
+                // Animate message appearance
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                    message.style.transform = 'translateX(0) scale(1)';
+                }, 50);
+                
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
@@ -605,28 +932,98 @@
              return formatted;
         }
         
+        // Initialize agent navigation with enhanced animations
+        document.querySelectorAll('.nav-item[data-agent]').forEach((item, index) => {
+            // Stagger animation on load
+            item.style.animationDelay = (index * 0.1) + 's';
+            
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item[data-agent]').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                
+                // Add active class with animation
+                item.classList.add('active');
+                currentAgent = item.dataset.agent;
+                
+                const placeholders = {
+                    'multimodel': 'Ask about documents, analysis, or general topics...',
+                    'financial': 'Ask about stocks, market data, or financial reports...',
+                    'web': 'Search the web for the latest information...'
+                };
+                
+                // Animate placeholder change
+                chatInput.style.opacity = '0.5';
+                setTimeout(() => {
+                    chatInput.placeholder = placeholders[currentAgent];
+                    chatInput.style.opacity = '1';
+                }, 150);
+            });
+        });
+        
+        // Handle PDF file uploads with enhanced animations
+        pdfInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach((file, index) => {
+                    if (file.type === 'application/pdf') {
+                        uploadedFiles.push(file);
+                        setTimeout(() => addFileToUI(file), index * 100);
+                    }
+                });
+            }
+        });
+        
+        function addFileToUI(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.style.opacity = '0';
+            fileItem.style.transform = 'translateY(20px)';
+            fileItem.innerHTML = `
+                ${file.name}
+                <span class="remove-file" data-name="${file.name}">×</span>
+            `;
+            fileList.appendChild(fileItem);
+            
+            // Animate file item appearance
+            setTimeout(() => {
+                fileItem.style.opacity = '1';
+                fileItem.style.transform = 'translateY(0)';
+            }, 50);
+            
+            // Add click handler for remove button
+            fileItem.querySelector('.remove-file').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const fileName = e.target.getAttribute('data-name');
+                uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+                
+                // Animate removal
+                fileItem.style.opacity = '0';
+                fileItem.style.transform = 'translateY(-20px)';
+                setTimeout(() => fileItem.remove(), 300);
+            });
+        }
+        
+        // Enhanced form submission
         document.getElementById('chatForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const message = document.getElementById('chatInput').value.trim();
             const agentType = document.querySelector('.nav-item.active').dataset.agent;
 
-            // Get all uploaded files
             const fileInput = document.getElementById('pdfInput');
             const files = Array.from(fileInput.files);
 
             if (!message && files.length === 0) return;
 
-            // Create FormData object
             const formData = new FormData();
             formData.append('message', message || "Please analyze the uploaded documents");
             formData.append('agent', agentType);
 
-            // Append all files
             files.forEach(file => {
                 formData.append('files', file);
             });
 
-            // Add user message to chat
             if (message) {
                 addMessage('user', message);
             }
@@ -634,30 +1031,53 @@
                 addMessage('user', `Uploaded ${files.length} file(s) for analysis`);
             }
 
-            document.getElementById('chatInput').value = '';
+            // Clear input with animation
+            chatInput.style.opacity = '0';
+            setTimeout(() => {
+                chatInput.value = '';
+                chatInput.style.opacity = '1';
+            }, 150);
+            
             fileInput.value = '';
-            document.getElementById('fileList').innerHTML = '';
+            
+            // Animate file list clearing
+            const fileItems = document.querySelectorAll('.file-item');
+            fileItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(-20px)';
+                    setTimeout(() => item.remove(), 300);
+                }, index * 50);
+            });
 
-            // Show loading indicator
+            // Enhanced loading animation
             const loadingMsg = document.createElement('div');
             loadingMsg.className = 'message agent';
+            loadingMsg.style.opacity = '0';
+            loadingMsg.style.transform = 'translateX(-30px) scale(0.95)';
             loadingMsg.innerHTML = `
                 <span class="thinking-anim">
                     <span class="dots"></span>
+                    <span class="dots" style="animation-delay: 0.2s;"></span>
+                    <span class="dots" style="animation-delay: 0.4s;"></span>
                     <span style="margin-left:10px;">Thinking</span>
                 </span>
             `;
-            document.getElementById('chatMessages').appendChild(loadingMsg);
-            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+            chatMessages.appendChild(loadingMsg);
+            
+            // Animate loading message
+            setTimeout(() => {
+                loadingMsg.style.opacity = '1';
+                loadingMsg.style.transform = 'translateX(0) scale(1)';
+            }, 50);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Send request to backend
-                // Add this before your existing script
                 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
                     ? 'http://localhost:8000' 
                     : '';
                 
-                // Then update your fetch call
                 const response = await fetch(`${API_URL}/chat`, {
                     method: "POST",
                     body: formData
@@ -666,27 +1086,113 @@
                 if (!response.ok) throw new Error('Network response was not ok');
 
                 const data = await response.json();
-                document.getElementById('chatMessages').removeChild(loadingMsg);
-                addMessage('agent', data.response);
+                
+                // Animate loading message removal
+                loadingMsg.style.opacity = '0';
+                loadingMsg.style.transform = 'translateX(-30px) scale(0.95)';
+                setTimeout(() => {
+                    if (loadingMsg.parentNode) {
+                        loadingMsg.parentNode.removeChild(loadingMsg);
+                    }
+                }, 300);
+                
+                setTimeout(() => addMessage('agent', data.response), 300);
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('chatMessages').removeChild(loadingMsg);
-                addMessage('agent', 'Sorry, I encountered an error. Please try again.');
+                loadingMsg.style.opacity = '0';
+                loadingMsg.style.transform = 'translateX(-30px) scale(0.95)';
+                setTimeout(() => {
+                    if (loadingMsg.parentNode) {
+                        loadingMsg.parentNode.removeChild(loadingMsg);
+                    }
+                }, 300);
+                
+                setTimeout(() => addMessage('agent', 'Sorry, I encountered an error. Please try again.'), 300);
             }
         });
         
         function startNewChat() {
-            chatStarted = false;
-            chatMessages.innerHTML = '';
-            chatMessages.style.display = 'none';
-            welcomeSection.style.display = 'block';
-            chatInput.value = '';
-            uploadedFiles = [];
-            fileList.innerHTML = '';
-            chatInput.focus();
+            // Animate chat clearing
+            const messages = document.querySelectorAll('.message');
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateY(-20px)';
+                    setTimeout(() => msg.remove(), 300);
+                }, index * 50);
+            });
+            
+            setTimeout(() => {
+                chatStarted = false;
+                chatMessages.style.display = 'none';
+                welcomeSection.style.display = 'block';
+                
+                // Re-animate welcome section
+                welcomeSection.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeSection.style.opacity = '1';
+                }, 100);
+                
+                uploadedFiles = [];
+                fileList.innerHTML = '';
+                chatInput.focus();
+            }, 500);
         }
 
-        document.addEventListener('DOMContentLoaded', () => chatInput.focus());
+        // Enhanced input focus effects
+        chatInput.addEventListener('focus', () => {
+            chatInput.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        chatInput.addEventListener('blur', () => {
+            chatInput.parentElement.style.transform = 'scale(1)';
+        });
+        
+        // Add typing indicator
+        let typingTimer;
+        chatInput.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            chatInput.parentElement.style.borderColor = 'var(--primary-accent)';
+            
+            typingTimer = setTimeout(() => {
+                chatInput.parentElement.style.borderColor = 'transparent';
+            }, 1000);
+        });
+
+        // Initialize focus and particles
+        document.addEventListener('DOMContentLoaded', () => {
+            chatInput.focus();
+            
+            // Add more particles periodically
+            setInterval(() => {
+                if (particlesContainer.children.length < 30) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = '0s';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    
+                    const size = Math.random() * 3 + 1;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    
+                    particlesContainer.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 15000);
+                }
+            }, 2000);
+            
+            // Add sparkle effect on mouse movement
+            document.addEventListener('mousemove', (e) => {
+                if (Math.random() < 0.3) {
+                    createSparkle(e.clientX, e.clientY);
+                }
+            });
+        });
     </script>
 </body>
 </html>
