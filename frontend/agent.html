@@ -165,7 +165,7 @@
             animation: backgroundPan 15s ease-in-out infinite;
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            cursor: default; /* Default cursor */
+            cursor: default;
         }
 
         /* Interactive elements get pointer cursor */
@@ -177,7 +177,7 @@
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiGAAAANlBMVEX///9ISEhJSUlKSkpMTExNTU1OTk5QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVl2lfHAAAAAEXRSTlMAARk2lKIZ6uG+mej+64d1fX3o8gAAAFNJREFUeNrt08sRACAMxDBa/v+vEwWMhIidZ+EwKwpE8wEAAAAAAAAAAAAAAAAAAN4G9+0jKze9PGeLp3kuJ6f5LizRNE/l5PTeLp7m+f8FAAD+A2wDATyGk6JaAAAAAElFTkSuQmCC');
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiGAAAANlBMVEX///9ISEhJSUlKSkpMTExNTU1OTk5QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVl2lfHAAAAAEXRSTlMAARk2lKIZ6uG+mej+64d1fX3o8gAAAFNJREFUeNrt08sRACAMxDBa/v+vEwWMhIidZ+EwKwpE8wEAAAAAAAAAAAAAAAAAAN4G9+0jKze9PGeLp3kuJ6f5LizRNE/l5PTeLp7muZyc5rswRdM8lZPTe7t4muf/FwAA+A+wDQTwGE6KagAAAABJRU5ErkJggg==');
             opacity: 0.02;
             pointer-events: none;
             z-index: 1000;
@@ -376,6 +376,7 @@
             flex-direction: column;
             height: 100vh;
             min-height: 0;
+            width: 100%;
         }
 
         .welcome-section {
@@ -454,24 +455,23 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height: calc(100vh - 180px); /* Adjusted to account for input section */
+            max-height: calc(100vh - 180px);
             min-height: 0;
-            will-change: transform; /* Optimize for scrolling */
+            will-change: transform;
+            width: 100%;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-
 
         .message {
             max-width: 75%;
-            word-wrap : break-word;
+            word-wrap: break-word;
             overflow-wrap: break-word;
-            white-space:pre-wrap;
-            
-            }
+            white-space: pre-wrap;
+            padding: 1rem 1.25rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
         .message::before {
             content: '';
@@ -493,7 +493,6 @@
             background: var(--gradient-primary);
             color: white;
             border-bottom-right-radius: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             animation: messageSlideInRight 0.5s ease-out;
         }
 
@@ -509,6 +508,7 @@
             padding: 1.5rem 2rem;
             border-top: 1px solid var(--glass-border);
             animation: fadeIn 1s ease-out 1s both;
+            width: 100%;
         }
 
         .input-wrapper {
@@ -520,6 +520,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .input-wrapper::before {
@@ -725,16 +726,50 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
             .sidebar {
-                width: 200px;
+                width: 100%;
+                padding: 1rem;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                border-right: none;
+                border-bottom: 1px solid var(--glass-border);
+            }
+            
+            .logo {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .nav-section {
+                margin-bottom: 1rem;
+                width: 48%;
+            }
+            
+            .new-chat-btn {
+                width: 100%;
+                margin-top: 1rem;
             }
             
             .welcome-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
             }
             
             .message {
                 max-width: 90%;
+                padding: 0.8rem 1rem;
+            }
+            
+            .input-section {
+                padding: 1rem;
             }
         }
     </style>
@@ -787,7 +822,7 @@
                     </div>
                     <p class="welcome-subtitle">Your intelligent partner for real-time insights, financial data, and web intelligence.</p>
                 </div>
-                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-messages" id="chatMessages" style="display: none;"></div>
                 <div class="input-section">
                     <form id="chatForm" style="margin:0;">
                         <div class="input-wrapper">
@@ -1131,7 +1166,7 @@
             setTimeout(() => {
                 chatStarted = false;
                 chatMessages.style.display = 'none';
-                welcomeSection.style.display = 'block';
+                welcomeSection.style.display = 'flex';
                 
                 // Re-animate welcome section
                 welcomeSection.style.opacity = '0';
