@@ -454,18 +454,24 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height: unset;
+            max-height: calc(100vh - 180px); /* Adjusted to account for input section */
             min-height: 0;
+            will-change: transform; /* Optimize for scrolling */
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
 
         .message {
             max-width: 75%;
-            padding: 1rem 1.5rem;
-            border-radius: 1.25rem;
-            line-height: 1.6;
-            position: relative;
-            overflow: hidden;
-        }
+            word-wrap : break-word;
+            overflow-wrap: break-word;
+            white-space:pre-wrap;
+            
+            }
 
         .message::before {
             content: '';
@@ -865,7 +871,7 @@
         // Initialize particles
         createParticles();
         
-        // Enhanced message animations
+        // Enhanced message animations with better scrolling
         function addMessage(type, content) {
             if (!chatStarted) {
                 welcomeSection.style.display = 'none';
@@ -883,11 +889,12 @@
                 let formatted = formatMessage(content);
                 message.innerHTML = '';
                 chatMessages.appendChild(message);
-                
+
                 // Animate message appearance
                 setTimeout(() => {
                     message.style.opacity = '1';
                     message.style.transform = 'translateX(0) scale(1)';
+                    scrollToBottom(); // Scroll after animation
                 }, 50);
 
                 function typeWriter() {
@@ -905,7 +912,13 @@
                             message.innerHTML += formatted[i];
                             i++;
                         }
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                        // Only scroll if near bottom (don't interrupt user scrolling)
+                        const isNearBottom = chatMessages.scrollHeight - chatMessages.clientHeight - chatMessages.scrollTop < 100;
+                        if (isNearBottom) {
+                            scrollToBottom();
+                        }
+
                         setTimeout(typeWriter, 12);
                     }
                 }
@@ -913,23 +926,22 @@
             } else {
                 message.innerHTML = formatMessage(content);
                 chatMessages.appendChild(message);
-                
+
                 // Animate message appearance
                 setTimeout(() => {
                     message.style.opacity = '1';
                     message.style.transform = 'translateX(0) scale(1)';
+                    scrollToBottom();
                 }, 50);
-                
-                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
-        
-        function formatMessage(text) {
-             if (!text) return '';
-             let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-             formatted = formatted.replace(/\n/g, '<br>');
-             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-             return formatted;
+
+        // Helper function for smooth scrolling
+        function scrollToBottom() {
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'smooth'
+            });
         }
         
         // Initialize agent navigation with enhanced animations
@@ -1069,10 +1081,9 @@
             setTimeout(() => {
                 loadingMsg.style.opacity = '1';
                 loadingMsg.style.transform = 'translateX(0) scale(1)';
+                scrollToBottom();
             }, 50);
             
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
             try {
                 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
                     ? 'http://localhost:8000' 
@@ -1094,9 +1105,8 @@
                     if (loadingMsg.parentNode) {
                         loadingMsg.parentNode.removeChild(loadingMsg);
                     }
+                    addMessage('agent', data.response);
                 }, 300);
-                
-                setTimeout(() => addMessage('agent', data.response), 300);
             } catch (error) {
                 console.error('Error:', error);
                 loadingMsg.style.opacity = '0';
@@ -1105,9 +1115,8 @@
                     if (loadingMsg.parentNode) {
                         loadingMsg.parentNode.removeChild(loadingMsg);
                     }
+                    addMessage('agent', 'Sorry, I encountered an error. Please try again.');
                 }, 300);
-                
-                setTimeout(() => addMessage('agent', 'Sorry, I encountered an error. Please try again.'), 300);
             }
         });
         
